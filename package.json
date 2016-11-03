@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/markusra/TTM4128#readme",
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "request": "^2.76.0",
+    "xml2js": "^0.4.17"
   }
 }
