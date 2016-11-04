@@ -8,7 +8,7 @@ app.set('view engine', 'pug');
 
 var cim = require('./controllers/cim.js');
 
-app.get('/cim', function (req, res) {
+app.get('/', function (req, res) {
     cim.cimGetData(function(data) {
         res.render("cim", { osVersion: data[0], interfaces: data[1] });
     });
