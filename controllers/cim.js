@@ -3,6 +3,7 @@ var request = require('request');
 var parseString = require('xml2js').parseString;
 var async = require('async');
 
+// Main function (callbacks for all asynchronous functions)
 var cimGetData = function(mainCallback) {
     async.series([
             function(callback){
@@ -21,7 +22,9 @@ var cimGetData = function(mainCallback) {
         });
 };
 
+// Universal function for all requests
 function getCIMResponse(cmd, callback) {
+    // Set message header and body
     var options = {
         url: 'http://ttm4128.item.ntnu.no:5988/cimom',
         method: 'POST',
@@ -33,12 +36,15 @@ function getCIMResponse(cmd, callback) {
         body: cmd
     };
 
+    // Make an asynchronous request with a callback
     request(options, function (error, response, body) {
         callback(body);
     });
 }
 
+// Get OS version with CIM
 var cimOSVersion = function(callback) {
+    // Create CIM body for the request
     var OS_COMMAND = '\
         <?xml version="1.0" encoding="utf-8" ?> \
         <CIM CIMVERSION="2.0" DTDVERSION="2.0"> \
@@ -51,6 +57,7 @@ var cimOSVersion = function(callback) {
         </IMETHODCALL></SIMPLEREQ> \
         </MESSAGE></CIM>';
 
+    // Trigger the asynchronous request
     getCIMResponse(OS_COMMAND, function(xml) {
         getOSVersion(xml, function(osVersion) {
             callback(osVersion);
@@ -58,21 +65,22 @@ var cimOSVersion = function(callback) {
     });
 };
 
+// Fetch OS version from XML response
 function getOSVersion(xml, callback) {
     parseString(xml, function (err, result) {
         var value = result['CIM']['MESSAGE'][0]['SIMPLERSP'][0]['IMETHODRESPONSE'][0]['IRETURNVALUE'][0]['VALUE.NAMEDINSTANCE'][0]
-            ['INSTANCE'][0]['PROPERTY'][0]['VALUE'][0]
+            ['INSTANCE'][0]['PROPERTY'][0]['VALUE'][0];
 
         var startIndex = value.indexOf('PRETTY_NAME="') + 'PRETTY_NAME="'.length;
         var endIndex = value.indexOf('"', startIndex);
-
         var osVersion = value.substring(startIndex, endIndex);
-
         callback(osVersion)
     });
 }
 
+// Get OS version with CIM
 var cimIPInterfaces = function(callback) {
+    // Create CIM body for the request
     var IP_COMMAND = '\
         <?xml version="1.0" encoding="utf-8" ?> \
         <CIM CIMVERSION="2.0" DTDVERSION="2.0"> \
@@ -85,6 +93,7 @@ var cimIPInterfaces = function(callback) {
         </IMETHODCALL></SIMPLEREQ> \
         </MESSAGE></CIM>';
 
+    // Trigger the asynchronous request
     getCIMResponse(IP_COMMAND, function(xml) {
         getIPInterfaces(xml, function(interfaces) {
             callback(interfaces);
@@ -92,6 +101,7 @@ var cimIPInterfaces = function(callback) {
     });
 };
 
+// Fetch OS version from XML response
 function getIPInterfaces(xml, callback) {
     parseString(xml, function (err, result) {
         var values = result['CIM']['MESSAGE'][0]['SIMPLERSP'][0]['IMETHODRESPONSE'][0]['IRETURNVALUE'][0]['VALUE.NAMEDINSTANCE'];
@@ -102,10 +112,8 @@ function getIPInterfaces(xml, callback) {
             ifInfo.push(values[i]['INSTANCE'][0]['PROPERTY'][20]['VALUE'][0]);
             ifInfo.push(values[i]['INSTANCE'][0]['PROPERTY'][34]['VALUE'][0]);
             ifInfo.push(values[i]['INSTANCE'][0]['PROPERTY'][31]['VALUE'][0]);
-
             interfaces.push(ifInfo)
         }
-
         callback(interfaces);
     });
 }
