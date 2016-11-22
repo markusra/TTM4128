@@ -10,14 +10,14 @@ var snmpGetData = function() {
 
     var interfaces = [];
     for (var i = 1; i <  snmpInterfaces.length; i++) {
-        // Use gathered information to fetch ifDescr and ipAdEntNetMask and format
+        // Extract ifDescr and ipAdEntNetMask from response
         var interfaceInfo = snmpInterfaces[i].substring(snmpInterfaces[i].indexOf('.') + 1).split(' = INTEGER: ');
         var interfaceIP = interfaceInfo[0];
         var interfaceIndex = interfaceInfo[1];
         var interfaceName = exec('snmpget -c ttm4128 -v 2c localhost ifDescr.' + interfaceIndex, {silent:true}).stdout.split('STRING: ')[1].trim();
         var interfaceMask = exec('snmpget -c ttm4128 -v 2c localhost ipAdEntNetMask.' + interfaceIP, {silent:true}).stdout.split('IpAddress: ')[1].trim();
 
-        // Save the information in an array
+        // Save the formatted information in an array
         interfaces.push([interfaceName, interfaceIP, interfaceMask]);
     }
 
