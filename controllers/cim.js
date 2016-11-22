@@ -42,7 +42,7 @@ function getCIMResponse(cmd, callback) {
     });
 }
 
-// Get OS version with CIM
+// Fetch OS version with CIM
 var cimOSVersion = function(callback) {
     // Create CIM body for the request
     var OS_COMMAND = '\
@@ -65,7 +65,7 @@ var cimOSVersion = function(callback) {
     });
 };
 
-// Fetch OS version from XML response
+// Extract OS version from XML response
 function getOSVersion(xml, callback) {
     parseString(xml, function (err, result) {
         var value = result['CIM']['MESSAGE'][0]['SIMPLERSP'][0]['IMETHODRESPONSE'][0]['IRETURNVALUE'][0]['VALUE.NAMEDINSTANCE'][0]
@@ -78,7 +78,7 @@ function getOSVersion(xml, callback) {
     });
 }
 
-// Get OS version with CIM
+// Fetch IP interfaces with CIM
 var cimIPInterfaces = function(callback) {
     // Create CIM body for the request
     var IP_COMMAND = '\
@@ -101,7 +101,7 @@ var cimIPInterfaces = function(callback) {
     });
 };
 
-// Fetch OS version from XML response
+// Extract IP interfaces from XML response
 function getIPInterfaces(xml, callback) {
     parseString(xml, function (err, result) {
         var values = result['CIM']['MESSAGE'][0]['SIMPLERSP'][0]['IMETHODRESPONSE'][0]['IRETURNVALUE'][0]['VALUE.NAMEDINSTANCE'];
@@ -117,6 +117,5 @@ function getIPInterfaces(xml, callback) {
         callback(interfaces);
     });
 }
-
 
 exports.cimGetData = cimGetData;
